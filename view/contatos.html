@@ -1,0 +1,29 @@
+<link rel="stylesheet" href="css/contatos.css">
+<div class="main">
+    <div class="border">
+        <div id="contato">
+            Entre em contato conosco
+
+            <br>
+            <div id="logos">
+                <img src="img/logo.png" alt="Friends of League">
+            </div>
+            <form id="formContatos" method="POST">
+                <input type="text" required name="nameV" placeholder="Nome" id="nameV">
+                <i class="fas fa-file-signature"></i>
+                <div id="erroNome"></div>
+                <input type="text" required name="emailV" placeholder="E-mail" id="emailV">
+                <i class="fas fa-at"></i>
+                <div id="erroEmail"></div>
+                <input type="text" required name="titleV" placeholder="Titutlo" id="titleV">
+                <i class="fas fa-tasks"></i>
+                <div id="erroTitle"></div>
+                <textarea rows="5" cols="30" required name="assuntV" placeholder="Assunto" id="assuntV"></textarea>
+                <i class="far fa-comment-dots msg"></i>
+                <div id="erroAssunt"></div>
+                <input type="submit" value="Enviar">
+            </form>
+        </div>
+    </div>
+</div>
+<script src="js/validacao.js"></script>

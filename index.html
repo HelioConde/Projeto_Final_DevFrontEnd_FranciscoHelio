@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="Francisco Hélio">
+    <meta name="description" content="Aqui eu utilizo a API liberada do Jogo League of Legends">
+    <meta name="keywords" content="sites, web, meta tag, código, html">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="icon" href="favicon.ico" type="image/x-icon" />
+    <title>Projeto Final - Desenvolvimento Front-end</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/msg.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU"
+        crossorigin="anonymous">
+    <script src="js/X-Riot-Token.js"></script>
+    <script src="js/jquery-3.3.1.min.js"></script>
+    <script src="js/background.js"></script>
+    <script src="js/dropDown.js"></script>
+    <script src="js/script.js"></script>
+    <script src="js/modal.js"></script>
+    <script src="js/crud.js"></script>
+    <script src="js/subPaginas.js"></script>
+
+    <style>
+        /* puxa somente o background */
+    </style>
+</head>
+
+<body>
+    <div class="dialog">
+        <div class="ajaxmsg msg"></div>
+    </div>
+    <header>
+        <nav>
+            <div class="navBar">
+                <button onclick="myDropDown()" class="fas fa-bars" id="dropDown">
+                </button>
+                <span class="logo">
+                    <a href="#" id="home">
+                        <img src="img/logo.png" alt="Friends of League">
+                    </a>
+                </span>
+                <a href="#" id="galeria">Galeria</a>
+                <a href="#" id="contatos">Contatos</a>
+                <a href="#" id="atualizacoes">Atualizações</a>
+                <span class="status alert"></span>
+            </div>
+        </nav>
+    </header>
+    <main>
+        <div id="myDropdown" class="dropDown">
+            <div id="box">
+                <div class="perfil">
+                    <div class="perfil">
+                        <button id="del" class="fas fa-times"></button>
+                        <a id="perfil" href="#">
+                            <span id="icone"></span>
+                            <span id="level"></span>
+                            <div id="nome"></div>
+                            <span id="eloIcone"></span>
+                            <span id="elo"></span>
+                            <span id="posicao"></span>
+                            <br>
+                            <div id="pontos"></div>
+                        </a>
+                    </div>
+                    </a>
+                </div>
+                <div id="friends">
+                    <form id="formCadastro" method="POST">
+                        <input type="text" required name="add" id="add" placeholder="Adicionar Amigo">
+                        <input id="salvar" type="submit" value="" name="salvar">
+                        <label id="salvarr" class="fas fa-share" for="salvar"></label>
+                    </form>
+                    <div id="lista">
+                        <table id="collapse">
+                            <tr id="teste">
+
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="padding">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="center">
+            <div class="lds-dual-ring" id="carregando"></div>
+        </div>
+        <div id="view" class="view">
+            <div class="main">
+            </div>
+        </div>
+
+    </main>
+    <footer>
+        <div class="social">
+            <a href="#" onclick="alert('')">
+                <i class="fab fa-facebook"></i>
+                <a href="https://facebook.com/LeagueofLegendsBrasil/" target="_blank">
+                    <span class="facebook">Facebook Oficial
+                    </span>
+                </a>
+            </a>
+        </div>
+        <p>Todos os direitos reservados Copyright © 2018 - Francisco Hélio</p>
+    </footer>
+</body>
+
+</html>
