@@ -1,0 +1,28 @@
+.main {
+    text-align: center;
+}
+
+.title {
+    margin-top: 100px;
+    width: 100%;
+    margin: 10px 0 auto;
+    padding: 20px 0;
+    background-color: #313131;
+    color: white;
+}
+
+.border {
+    border: 60px solid #313131;
+}
+
+#logos img {
+    width: 20%;
+}
+
+i {
+    color: rgb(179, 189, 245);
+    font-size: 18px;
+}
+.msg {
+    margin-left: 0.5%;
+}

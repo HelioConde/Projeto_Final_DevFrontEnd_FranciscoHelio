@@ -1,0 +1,121 @@
+#iconePerfil img {
+    margin: 20px;
+    float: left;
+    border: 2px solid #785a28;
+    width: 130px;
+}
+
+#iconePerfil {
+    margin-left: 20px;
+    font-size: 18px;
+}
+
+#levelPerfil {
+    font-size: 18px;
+    margin: 1% -10%;
+    float: left;
+}
+
+#nomePerfil {
+    margin-top: 3%;
+    margin-left: 20%;
+    font-size: 50px;
+    color: #785a28;
+    -webkit-text-stroke-width: 1px;
+    -webkit-text-stroke-color: black;
+}
+
+#IconeAA {
+    margin-left: 20px;
+    font-size: 18px;
+}
+
+#levelAA {
+    float: left;
+}
+
+#nomeAA {
+    margin-top: 3%;
+    margin-left: 20%;
+    font-size: 50px;
+    color: #785a28;
+    -webkit-text-stroke-width: 1px;
+    -webkit-text-stroke-color: black;
+}
+
+#IconeAA img {
+    margin: 20px;
+    float: left;
+    border: 2px solid #785a28;
+    width: 130px;
+}
+
+.eloAA {
+    margin-right: 10px;
+    font-size: 30px;
+}
+
+.posicaoAA {
+    font-size: 30px;
+}
+
+.eloIconeAA img {
+    float: right;
+    margin-top: -5%;
+    margin-right: 5%;
+}
+
+.queue {
+    font-size: 30px;
+}
+
+.pontosA {
+    font-size: 30px;
+    margin-right: 2%;
+}
+
+.eloM {
+    float: right;
+}
+
+#art {
+    text-align: center;
+}
+
+#art img {
+    width: 60%;
+}
+
+#art {
+    text-align: center;
+}
+
+#art img {
+    display: block;
+    width: 60%;
+    margin: auto;
+}
+
+@media (max-width: 1120px) {
+    #levelPerfil {
+        font-size: 20px;
+        margin: 0 10%;
+        float: left;
+    }
+}
+
+@media (max-width: 920px) {
+    #levelPerfil {
+        font-size: 20px;
+        margin: 1%;
+        float: left;
+    }
+}
+
+@media (max-width: 600px) {
+    #levelPerfil {
+        font-size: 20px;
+        margin: 0%;
+        float: none;
+    }
+}

@@ -1,0 +1,87 @@
+.dialog {
+    position: fixed;
+    left: 0%;
+    top: 0%;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 104;
+}
+
+.dialog .msg {
+    background-color: white;
+    position: absolute;
+    left: 45%;
+    top: 45%;
+    width: 400px;
+    height: 160px;
+    z-index: 106;
+    border: 5px solid black;
+    display: none;
+}
+
+.dialog .msg {
+    padding: 100px 100px 0px 100px;
+    margin-left: -220px;
+    margin-top: -90px;
+    font-size: 20px;
+    text-align: center;
+}
+
+.txtDialog {
+    text-align: center;
+}
+
+.dialog button {
+    margin-left: 5px;
+    width: 85px;
+    box-sizing: border-box;
+    padding: 0.75rem;
+    font-size: 1rem;
+    color: white;
+    border: none;
+    background: #c9aa71;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.25rem darken(#5e0f31, 10%);
+    cursor: pointer;
+    outline: none;
+}
+
+.dialog button:active {
+    background: #c78409;
+}
+
+strong {
+    text-align: center;
+}
+
+.lds-dual-ring {
+    display: inline-block;
+    width: 64px;
+    height: 64px;
+    z-index: 107;
+    top: 40%;
+    position: fixed;
+}
+
+.lds-dual-ring:after {
+    content: " ";
+    display: block;
+    width: 46px;
+    height: 46px;
+    margin: 0px;
+    border-radius: 50%;
+    border: 5px solid #cef;
+    border-color: #cef transparent #cef transparent;
+    animation: lds-dual-ring 1.2s linear infinite;
+    z-index: 107;
+}
+
+@keyframes lds-dual-ring {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}

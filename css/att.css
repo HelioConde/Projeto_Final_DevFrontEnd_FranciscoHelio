@@ -1,0 +1,34 @@
+.main {
+    text-align: center;
+}
+
+.title {
+    margin-top: 100px;
+    width: 100%;
+    margin: 10px 0 auto;
+    padding: 20px 0;
+    background-color: #313131;
+    color: white;
+    font-size: 25px;
+}
+
+.border {
+    border: 60px solid #313131;
+}
+
+.youtube a {
+    color: red;
+}
+
+iframe {
+    width: 100%;
+    max-width: 560px;
+    z-index: 1;
+}
+
+.player {
+    margin: 0 auto;
+    text-align: center;
+    background-color: #3131314f;
+    width: 80%;
+}
