@@ -1,46 +1,45 @@
-<div align="center">
-  <h1>🎓 Projeto Final — Formação em Front-End</h1>
-  <p><strong>Trabalho de conclusão de estudos com múltiplas páginas, navegação e experimentos de integração web.</strong></p>
-  <p><img alt="HTML" src="https://img.shields.io/badge/HTML5%20%2B%20CSS3-Frontend-1572B6"> <img alt="JavaScript" src="https://img.shields.io/badge/JavaScript%20%2B%20jQuery-Intera%C3%A7%C3%B5es-F7DF1E?logo=javascript&logoColor=black"></p>
-</div>
+# League Friends 2.0 — Social Hub
 
-## Sobre o projeto
+Modernização do projeto histórico Projeto_Final_DevFrontEnd_FranciscoHelio, agora como aplicação **100% estática** no GitHub Pages, sem PHP obrigatório, banco de dados ou chave Riot no navegador.
 
-Esta é uma das entregas históricas da minha formação técnica em **desenvolvimento front-end**. Reúne uma pequena aplicação de várias páginas, navegação dinâmica, estilos próprios e scripts para explorar interações e consumo de informações externas.
+## Funcionalidades concluídas nesta branch
+- Catálogo Data Dragon pt_BR com versão dinâmica, fallback de reserva e imagens de campeões.
+- Busca, filtros por classe, detalhes e favoritos persistidos por navegador.
+- Lista de amigos local, migração de dados antigos, importar/exportar JSON e remoção segura.
+- Galeria de campeões, páginas sociais e contatos pelo GitHub.
+- Responsividade, navegação semântica, foco visível, reduced motion.
+- Testes unitários, Playwright em desktop e mobile, workflow de CI e GitHub Pages.
 
-É um **registro da trajetória de aprendizado**, não uma aplicação contemporânea homologada.
+## Desenvolvimento local
 
-## Páginas
+    npm install
+    npm run dev
+    npm run check
+    npx playwright install chromium
+    npm run test:e2e
 
-| Arquivo | Conteúdo |
-| --- | --- |
-| `index.html` | Página inicial |
-| `view/home.html` | Home |
-| `view/perfil.html` | Perfil |
-| `view/galeria.html` | Galeria |
-| `view/atualizacoes.html` | Atualizações |
-| `view/contatos.html` | Contato |
+## Deploy
+Configurar **Settings > Pages > Source: GitHub Actions**. Após merge da branch na main, o workflow publica o site em:
 
-A interface usa scripts como `js/background.js`, `js/dropDown.js`, `js/modal.js`, `js/crud.js` e `js/subPaginas.js`, com bibliotecas locais para jQuery.
+https://helioconde.github.io/Projeto_Final_DevFrontEnd_FranciscoHelio/
 
-## Como visualizar
+O Vite utiliza base path /Projeto_Final_DevFrontEnd_FranciscoHelio/ no build.
 
-```bash
-git clone https://github.com/HelioConde/Projeto_Final_DevFrontEnd_FranciscoHelio.git
-cd Projeto_Final_DevFrontEnd_FranciscoHelio
-python -m http.server 8000
-```
+## Segurança e limites
+- GitHub Pages não executa PHP. Os arquivos legados permanecem no repositório como referência, mas não são importados pelo build.
+- Consultas de ranking e partidas **reais** exigem um intermediário seguro. Não confundir as partidas fictícias com resultados ao vivo.
+- Dados públicos de campeões são consultados no Data Dragon. Se offline, um catálogo de reserva permite navegar.
+- Amigos e favoritos são locais ao navegador. Sem conta e sem sincronização automática.
+- Revogar qualquer chave Riot historicamente publicada. Excluir token da branch **não remove o histórico Git**.
+- Independente e não endossado pela Riot Games.
 
-Abra `http://localhost:8000`. Algumas demonstrações podem depender de APIs que mudaram desde a criação.
-
-## Observação de segurança
-
-O HTML histórico faz referência a um arquivo `js/X-Riot-Token.js`. **Nunca mantenha chaves Riot reais em arquivos JavaScript públicos**; faça uma revisão de credenciais e revogue qualquer token antigo exposto antes de republicar ou reaproveitar essa integração.
-
-## Aprendizados e evolução
-
-Navegação multipágina, composição de layout, manipulação do DOM, integração de dados e organização de recursos visuais. Melhorias futuras: acessibilidade, responsividade, testes automáticos e retirada de dependências obsoletas.
-
-[Ver outros projetos](https://github.com/HelioConde?tab=repositories) · [Portfólio 2.0](https://github.com/HelioConde/portfolio2.0)
+## Organização
+- src/main.js — navegação e componentes
+- src/storage.js — persistência e migração segura
+- src/catalog.js — Data Dragon e fallback
+- src/style.css — tokens e layout
+- data/demo.json — partidas demonstrativas
+- docs/DESIGN_SYSTEM.md — padrões visuais
+- tests — testes automatizados
 
 Criado por [Hélio Conde](https://github.com/HelioConde).
