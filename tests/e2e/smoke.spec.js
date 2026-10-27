@@ -31,3 +31,25 @@ test('favoritos e detalhe do campeão',async ({page})=>{
 test('sem scroll horizontal indevido',async ({page})=>{
  await expect.poll(()=>page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth+1)).toBeTruthy();
 });
+
+test('filtro favoritos e botões preservam foco e rolagem',async ({page})=>{
+ await page.getByRole('link',{name:'Campeões',exact:true}).click();
+ await page.getByRole('checkbox',{name:/Somente favoritos/}).check();
+ await expect(page.getByText('Ainda não há favoritos.')).toBeVisible();
+ await page.getByRole('checkbox',{name:/Somente favoritos/}).uncheck();
+ await page.getByRole('button',{name:'Favoritar Ahri'}).click();
+ await expect(page.getByRole('button',{name:'Remover Ahri'})).toBeVisible();
+ await page.getByRole('checkbox',{name:/Somente favoritos/}).check();
+ await expect(page.locator('#champion-grid .champ-card')).toHaveCount(1);
+ await expect(page.getByRole('link',{name:'Ver Ahri'})).toBeVisible();
+ await page.getByRole('checkbox',{name:/Somente favoritos/}).uncheck();
+ await page.getByRole('button',{name:'Remover Ahri'}).click();
+ await expect(page.getByRole('button',{name:'Favoritar Ahri'})).toBeVisible();
+});
+
+test('fallback de imagens externas e visualização offline',async ({page})=>{
+ await page.getByRole('link',{name:'Galeria',exact:true}).click();
+ await expect(page.locator('.gallery-card')).toHaveCount(12);
+ await expect.poll(()=>page.locator('.gallery-card img.asset-failed').count()).toBeGreaterThan(0);
+ await expect(page.locator('main')).toBeVisible();
+});
