@@ -3,6 +3,7 @@
  * Uso: node scripts/verify-pages.mjs https://usuario.github.io/repo/
  */
 import assert from 'node:assert/strict';
+import { extractStaticImports } from './module-imports.mjs';
 
 const base = new URL(process.argv[2] || 'https://helioconde.github.io/Projeto_Final_DevFrontEnd_FranciscoHelio/');
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
@@ -50,10 +51,9 @@ async function verify() {
     const response = await get(url);
     mime(response, /javascript|ecmascript/i, 'Módulo JavaScript');
     const code = await response.text();
-    assert.doesNotMatch(code, /import\s*(?:[^'"]*?from\s*)?['"][^'"]+\.(?:css|json)['"]/,
-      'CSS ou JSON importado como módulo JavaScript em ' + url.pathname);
-    const references = [...code.matchAll(/\bimport\s*(?:[^'"]*?\bfrom\s*)?['"]([^'"]+)['"]/g)]
-      .map(match => match[1]);
+    const references = extractStaticImports(code);
+    assert.ok(references.every(ref => !/\.(?:css|json)(?:$|[?#])/.test(ref)),
+      'Import estático de CSS/JSON detectado em ' + url.pathname);
     for (const reference of references) {
       if (!reference.startsWith('.') && !reference.startsWith('/')) {
         throw Error('Import não resolvido para navegador: ' + reference);
