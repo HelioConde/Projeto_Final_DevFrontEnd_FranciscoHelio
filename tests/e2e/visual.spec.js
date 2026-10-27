@@ -49,6 +49,20 @@ test.describe('Capturas full-page e auditoria visual', () => {
       await page.goto('/#/'+route,{waitUntil:'domcontentloaded'});
       await expect(page.locator('main#main')).toBeVisible();
       await expect(page.locator('main h1')).toBeVisible();
+      // Força lazy images do conteúdo a iniciar o carregamento antes da fotografia.
+      // Timeout pequeno para não bloquear o CI caso o CDN esteja indisponível.
+      await page.evaluate(async () => {
+        const imgs=[...document.querySelectorAll('main img')];
+        for(const img of imgs)img.loading='eager';
+        await Promise.race([
+          Promise.all(imgs.map(img=>img.decode().catch(()=>{}))),
+          new Promise(resolve=>setTimeout(resolve,3500))
+        ]);
+      });
+      const failedImages=await page.evaluate(()=>[...document.querySelectorAll('main img')]
+        .filter(img=>img.complete&&img.naturalWidth===0)
+        .map(img=>'Imagem indisponível: '+img.currentSrc.slice(0,170)));
+      externalWarnings.push(...failedImages);
       const problems=await page.evaluate(()=>{
         const issues=[],vw=window.innerWidth,root=document.documentElement;
         if(root.scrollWidth>vw+2)issues.push('Overflow horizontal do documento: '+root.scrollWidth+' > '+vw);
