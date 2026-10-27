@@ -1,0 +1,33 @@
+name: CI - Build, Playwright e capturas visuais
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --no-audit --no-fund
+      - run: npm run check
+      - run: npx playwright install --with-deps chromium
+      - name: Testes e 30 screenshots full-page
+        run: npm run test:e2e
+      - name: Criar galeria de capturas e resumo de erros
+        if: always()
+        run: node scripts/qa-report.mjs
+      - name: Publicar screenshots e diagnósticos
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: league-friends-visual-qa
+          path: qa-artifacts/
+          retention-days: 14
+          if-no-files-found: warn
