@@ -6,7 +6,8 @@ import demo from '../data/demo.js';
 const key='league-friends:'+settings.slug+':v2';
 let data=loadState(key);
 let catalog={champions:FALLBACK,version:FALLBACK_VERSION,demo:true};
-let query='',role='all',matchFilter='all';
+let query='',role='all',matchFilter='all',favoritesOnly=false;
+let feedbackTimeout;
 const app=document.getElementById('app');
 const esc=x=>String(x??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
 const page=()=>{
@@ -49,14 +50,14 @@ function championPage(){
  return '<section class="intro"><span class="label">BIBLIOTECA DE RUNETERRA</span><h1>Campeões</h1><p>Busque por nome, filtre por função e salve seus favoritos.</p></section>'+
  '<section class="filters" aria-label="Filtros de campeões"><div class="field"><label for="search">Buscar campeão</label><input id="search" type="search" autocomplete="off" placeholder="Ex.: Ahri, Jinx, Lux" value="'+esc(query)+'"></div>'+
  '<div class="field"><label for="role">Função</label><select id="role">'+[['all','Todas'],['Mage','Mago'],['Marksman','Atirador'],['Fighter','Lutador'],['Assassin','Assassino'],['Tank','Tanque'],['Support','Suporte']].map(v=>
- '<option value="'+v[0]+'"'+(role===v[0]?' selected':'')+'>'+v[1]+'</option>').join('')+'</select></div></section>'+
+ '<option value="'+v[0]+'"'+(role===v[0]?' selected':'')+'>'+v[1]+'</option>').join('')+'</select></div><label class="favorites-filter" for="only-favorites"><input type="checkbox" id="only-favorites"'+(favoritesOnly?' checked':'')+'><span>Somente favoritos <b id="favorite-count">'+data.favorites.length+'</b></span></label></section>'+
  '<p class="result-count" id="results" role="status"></p><div class="cards" id="champion-grid"></div>';
 }
 function updateList(){
  const grid=document.getElementById('champion-grid');if(!grid)return;
- const filtered=catalog.champions.filter(c=>(role==='all'||c.tags.includes(role))&&(c.name+' '+c.title).toLocaleLowerCase('pt-BR').includes(query.toLocaleLowerCase('pt-BR')));
- grid.innerHTML=filtered.length?filtered.map(card).join(''):'<div class="empty">Nenhum campeão encontrado. Ajuste a busca ou o filtro.</div>';
- document.getElementById('results').textContent=filtered.length+' campeões encontrados'+(catalog.demo?' · catálogo de reserva':'');
+ const filtered=catalog.champions.filter(c=>(!favoritesOnly||data.favorites.includes(c.id))&&(role==='all'||c.tags.includes(role))&&(c.name+' '+c.title).toLocaleLowerCase('pt-BR').includes(query.toLocaleLowerCase('pt-BR')));
+ grid.innerHTML=filtered.length?filtered.map(card).join(''):'<div class="empty">'+(favoritesOnly&&!data.favorites.length?'Ainda não há favoritos. Use o coração em um campeão para salvá-lo aqui.':'Nenhum campeão encontrado. Ajuste a busca ou o filtro.')+'</div>';
+ document.getElementById('results').textContent=filtered.length+' de '+catalog.champions.length+' campeões'+(favoritesOnly?' · favoritos':'')+(catalog.demo?' · catálogo de reserva':'');
 }
 function detail(id){
  const c=catalog.champions.find(ch=>ch.id===id);
@@ -64,7 +65,7 @@ function detail(id){
  const fav=data.favorites.includes(c.id);
  return '<a href="#/champions" class="back">← Voltar aos campeões</a><section class="detail"><div class="detail-image"><img src="'+splash(c.id)+'" alt="Arte de '+esc(c.name)+'"></div>'+
  '<div><span class="label">CAMPEÃO</span><h1>'+esc(c.name)+'</h1><h2>'+esc(c.title)+'</h2><p>'+esc(c.blurb?.replace(/<[^>]*>/g,'')||'Conheça esta lenda de Runeterra.')+'</p>'+
- '<div class="tag-row">'+c.tags.map(t=>pill(t)).join('')+'</div><button class="button primary" data-favorite="'+esc(c.id)+'">'+(fav?'♥ Remover dos favoritos':'♡ Adicionar aos favoritos')+'</button>'+
+ '<div class="tag-row">'+c.tags.map(t=>pill(t)).join('')+'</div><button class="button primary" data-favorite="'+esc(c.id)+'" aria-pressed="'+fav+'">'+(fav?'♥ Remover dos favoritos':'♡ Adicionar aos favoritos')+'</button>'+
  '<p class="note">Dados de campeões do Riot Data Dragon, quando disponível.</p></div></section>';
 }
 function friends(){
@@ -130,7 +131,38 @@ function render(){
  if(page()==='champions')updateList();
  document.title=(page()==='home'?settings.title:'League Friends · '+page().split('/')[0]);
 }
-function notify(text){const node=document.getElementById('feedback');if(node){node.textContent=text;node.classList.add('visible');}}
+function notify(text){
+ const node=document.getElementById('feedback');
+ if(!node)return;
+ clearTimeout(feedbackTimeout);
+ node.textContent=text;
+ node.classList.add('visible');
+ feedbackTimeout=setTimeout(()=>{
+  if(!node.isConnected)return;
+  node.classList.remove('visible');
+  node.textContent='';
+ },3800);
+}
+function syncFavoriteUI(id){
+ const favorite=data.favorites.includes(id);
+ for(const button of document.querySelectorAll('[data-favorite]')){
+  if(button.dataset.favorite!==id)continue;
+  button.setAttribute('aria-pressed',String(favorite));
+  if(button.classList.contains('favorite')){
+   button.classList.toggle('selected',favorite);
+   const name=catalog.champions.find(c=>c.id===id)?.name||id;
+   button.setAttribute('aria-label',(favorite?'Remover ':'Favoritar ')+name);
+   button.textContent=favorite?'♥':'♡';
+  }else{
+   button.textContent=favorite?'♥ Remover dos favoritos':'♡ Adicionar aos favoritos';
+  }
+ }
+ const counter=document.getElementById('favorite-count');
+ if(counter)counter.textContent=String(data.favorites.length);
+ for(const metric of document.querySelectorAll('.metric')){
+  if(metric.querySelector('span')?.textContent==='favoritos')metric.querySelector('strong').textContent=String(data.favorites.length);
+ }
+}
 function persist(){if(!saveState(key,data))notify('O armazenamento foi bloqueado. Exporte um backup.');}
 function exportJson(){
  const out={version:2,exportedAt:new Date().toISOString(),...normalizeState(data)};
@@ -144,7 +176,10 @@ document.addEventListener('click',e=>{
   const id=fav.dataset.favorite;
   if(!catalog.champions.some(c=>c.id===id))return;
   data.favorites=data.favorites.includes(id)?data.favorites.filter(v=>v!==id):[...data.favorites,id];
-  persist();render();notify(data.favorites.includes(id)?'Adicionado aos favoritos.':'Removido dos favoritos.');return;
+  persist();
+  if(page()==='champions'&&favoritesOnly){updateList();document.getElementById('only-favorites')?.focus();}
+  else syncFavoriteUI(id);
+  notify(data.favorites.includes(id)?'Adicionado aos favoritos.':'Removido dos favoritos.');return;
  }
  const remove=e.target.closest('[data-remove]');
  if(remove){
@@ -168,6 +203,7 @@ document.addEventListener('submit',e=>{
 document.addEventListener('input',e=>{if(e.target.id==='search'){query=e.target.value;updateList();}});
 document.addEventListener('change',async e=>{
  if(e.target.id==='role'){role=e.target.value;updateList();}
+ if(e.target.id==='only-favorites'){favoritesOnly=e.target.checked;updateList();}
  if(e.target.id==='match-filter'){matchFilter=e.target.value;render();}
  if(e.target.id==='import-file'&&e.target.files?.[0]){
   try{
@@ -179,5 +215,17 @@ document.addEventListener('change',async e=>{
  }
 });
 window.addEventListener('hashchange',()=>{render();document.getElementById('main')?.focus({preventScroll:true});window.scrollTo(0,0);});
+// Erros nas artes do CDN não deixam superfícies vazias.
+document.addEventListener('error',event=>{
+ const image=event.target;
+ if(image instanceof HTMLImageElement && image.closest('.cover,.hero-image,.detail-image,.gallery-card,.match-champ')){
+  image.classList.add('asset-failed');
+ }
+},true);
 render();
-fetchChampions().then(next=>{catalog=next;render();}).catch(()=>{});
+// Atualizar o catálogo não deve apagar um formulário que o usuário já começou a preencher.
+fetchChampions().then(next=>{
+ catalog=next;
+ const current=page();
+ if(['home','champions','gallery','matches'].includes(current)||current.startsWith('champion/'))render();
+}).catch(()=>{});

@@ -32,3 +32,10 @@ Validar os resultados visualmente com as screenshots do Playwright.
 ## Segurança e dados
 Sem chave privada Riot, sem PHP obrigatório, sem banco de dados.
 Dados de partidas explicitamente fictícios; campeões públicos por Data Dragon, com fallback.
+
+## Atualizações de UX
+- Favoritos: filtro dedicado e contador persistido; feedback acessível sem redesenho integral dos cards.
+- Avisos: desaparecem após alguns segundos e usam aria-live polite.
+- Resiliência de mídia: hero, galeria e detalhes recebem fundo local quando o CDN falha.
+- Atualizações assíncronas de catálogo não devem limpar formulários de amigos em uso.
+- O workflow também verifica a versão pública após o deploy, para identificar incompatibilidades MIME ou publicação desatualizada.
