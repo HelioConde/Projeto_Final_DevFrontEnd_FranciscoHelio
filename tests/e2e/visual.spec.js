@@ -43,16 +43,36 @@ test.describe('Capturas full-page e auditoria visual', () => {
         (uri.startsWith('http://127.0.0.1:4173/')?internalFailures:externalWarnings)
           .push('Falha de request '+uri.slice(0,180)+': '+request.failure()?.errorText);
       });
-      // Fixture determinística: ativa catálogo reserva sem impedir carregamento das artes no CDN.
+      // Versão propositalmente inválida para entrar no fallback sem fazer uma requisição 403; artes continuam sendo carregadas do CDN.
       await page.route('**/api/versions.json',r=>
-        r.fulfill({status:200,contentType:'application/json',body:'["0.0.0"]'}));
+        r.fulfill({status:200,contentType:'application/json',body:'["qa-fixture"]'}));
       await page.goto('/#/'+route,{waitUntil:'domcontentloaded'});
       await expect(page.locator('main#main')).toBeVisible();
       await expect(page.locator('main h1')).toBeVisible();
+      // Força lazy images do conteúdo a iniciar o carregamento antes da fotografia.
+      // Timeout pequeno para não bloquear o CI caso o CDN esteja indisponível.
+      await page.evaluate(async () => {
+        const imgs=[...document.querySelectorAll('main img')];
+        for(const img of imgs)img.loading='eager';
+        await Promise.race([
+          Promise.all(imgs.map(img=>img.decode().catch(()=>{}))),
+          new Promise(resolve=>setTimeout(resolve,3500))
+        ]);
+      });
+      const failedImages=await page.evaluate(()=>[...document.querySelectorAll('main img')]
+        .filter(img=>img.complete&&img.naturalWidth===0)
+        .map(img=>'Imagem indisponível: '+img.currentSrc.slice(0,170)));
+      externalWarnings.push(...failedImages);
       const problems=await page.evaluate(()=>{
         const issues=[],vw=window.innerWidth,root=document.documentElement;
         if(root.scrollWidth>vw+2)issues.push('Overflow horizontal do documento: '+root.scrollWidth+' > '+vw);
         if(!document.querySelector('main')?.textContent?.trim())issues.push('Conteúdo principal vazio');
+        const nav=document.querySelector('.nav');
+        if(nav && nav.scrollWidth>nav.clientWidth+2)issues.push('Menu principal cortado: '+nav.scrollWidth+'px em '+nav.clientWidth+'px');
+        if(nav)for(const item of nav.querySelectorAll('a')){
+          const r=item.getBoundingClientRect();
+          if(r.right>vw+2||r.left < -2)issues.push('Link de navegação fora da tela: '+item.textContent.trim());
+        }
         for(const el of document.querySelectorAll('main,.hero,.hero-image,.cards,.gallery,.columns,.filters,.stat-row,.match,.panel')){
           const style=getComputedStyle(el);
           if(el.scrollWidth>el.clientWidth+3&&!['auto','scroll'].includes(style.overflowX)){
