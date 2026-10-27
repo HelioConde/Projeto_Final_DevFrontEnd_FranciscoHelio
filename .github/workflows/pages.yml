@@ -38,3 +38,16 @@ jobs:
     steps:
       - uses: actions/deploy-pages@v4
         id: deployment
+
+  verify-live:
+    name: Verificar site publicado (HTML, MIME e imports)
+    needs: deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Testar arquivos servidos no GitHub Pages
+        run: node scripts/verify-pages.mjs https://helioconde.github.io/Projeto_Final_DevFrontEnd_FranciscoHelio/
