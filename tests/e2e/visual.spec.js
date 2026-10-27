@@ -25,7 +25,13 @@ test.describe('Capturas full-page e auditoria visual', () => {
       page.on('console',message=>{
         if(message.type() !== 'error')return;
         const msg=message.text();
-        (/ddragon|fonts\.googleapis|fonts\.gstatic/.test(msg) ? externalWarnings : consoleErrors).push(msg.slice(0,320));
+        // Mensagens do Chromium "Failed to load resource" omitem a URL.
+        // Requests e HTTP de mesma origem são validados separadamente e continuam reprovando.
+        if (/^Failed to load resource:/i.test(msg)) {
+          externalWarnings.push('Recurso não carregado (HTTP verificado à parte): '+msg.slice(0,220));
+        } else {
+          (/ddragon|fonts\.googleapis|fonts\.gstatic/.test(msg) ? externalWarnings : consoleErrors).push(msg.slice(0,320));
+        }
       });
       page.on('response',response=>{
         if(response.status()<400)return;
