@@ -20,6 +20,12 @@ jobs:
           node-version: '22'
       - run: npm install --no-audit --no-fund
       - run: npm run build
+      - name: Conferir conteúdo estático gerado
+        run: |
+          test -f dist/index.html
+          test -f dist/.nojekyll
+          ! grep -q './src/main.js' dist/index.html
+          ! grep -q 'data/demo.json' dist/index.html
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist

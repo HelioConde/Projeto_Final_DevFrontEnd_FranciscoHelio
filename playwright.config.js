@@ -22,7 +22,7 @@ export default defineConfig({
     { name: 'visual-qa', testMatch: '**/visual.spec.js', use: { ...devices['Desktop Chrome'] } }
   ],
   webServer: {
-    command: 'npm run dev -- --host 127.0.0.1 --port 4173',
+    command: 'python3 -m http.server 4173 --bind 127.0.0.1',
     port: 4173,
     reuseExistingServer: !process.env.CI,
     timeout: 30000

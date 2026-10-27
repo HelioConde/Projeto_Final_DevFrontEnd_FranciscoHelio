@@ -18,6 +18,16 @@ Modernização do projeto histórico Projeto_Final_DevFrontEnd_FranciscoHelio, a
     npx playwright install chromium
     npm run test:e2e
 
+## Compatibilidade com GitHub Pages
+
+O repositório também funciona diretamente em **Deploy from a branch → main / (root)**, sem build:
+`index.html` referencia `src/style.css` como stylesheet e `src/main.js` como módulo,
+e `data/demo.js` é um módulo JavaScript válido. Isso evita os erros de MIME
+`text/css` ou `application/json` ao abrir no Pages sem Vite.
+
+A CI testa a raiz com um servidor estático simples (sem Vite), **além** de rodar
+`npm run build`. Assim, as duas formas de publicação são verificadas.
+
 ## Deploy
 Configurar **Settings > Pages > Source: GitHub Actions**. Após merge da branch na main, o workflow publica o site em:
 
