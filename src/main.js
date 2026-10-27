@@ -1,8 +1,7 @@
-import './style.css';
 import {settings} from './settings.js';
 import {cleanName,cleanRegion,loadState,normalizeState,saveState} from './storage.js';
 import {FALLBACK,FALLBACK_VERSION,fetchChampions,icon,splash} from './catalog.js';
-import demo from '../data/demo.json';
+import demo from '../data/demo.js';
 
 const key='league-friends:'+settings.slug+':v2';
 let data=loadState(key);
