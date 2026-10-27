@@ -53,3 +53,30 @@ test('fallback de imagens externas e visualização offline',async ({page})=>{
  await expect.poll(()=>page.locator('.gallery-card img.asset-failed').count()).toBeGreaterThan(0);
  await expect(page.locator('main')).toBeVisible();
 });
+
+
+test('importação exige confirmação e não substitui amigos quando cancelada',async ({page})=>{
+ await page.getByRole('link',{name:'Amigos',exact:true}).click();
+ await page.getByRole('textbox',{name:'Nome ou Riot ID'}).fill('Amigo Original');
+ await page.getByRole('button',{name:'+ Adicionar'}).click();
+ await expect(page.getByText('Amigo Original')).toBeVisible();
+ const backup={friends:[{name:'Novo Amigo',region:'BR1'}],favorites:['Ahri']};
+ page.once('dialog',dialog=>dialog.dismiss());
+ await page.locator('#import-file').setInputFiles({name:'league-backup.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(backup))});
+ await expect(page.getByText('Amigo Original')).toBeVisible();
+ await expect(page.getByText('Novo Amigo')).toHaveCount(0);
+ page.once('dialog',dialog=>dialog.accept());
+ await page.locator('#import-file').setInputFiles({name:'league-backup.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(backup))});
+ await expect(page.getByText('Novo Amigo')).toBeVisible();
+ await expect(page.getByText('Amigo Original')).toHaveCount(0);
+ await page.reload();
+ await expect(page.getByText('Novo Amigo')).toBeVisible();
+});
+
+test('backup inválido não substitui estado local',async ({page})=>{
+ await page.getByRole('link',{name:'Amigos',exact:true}).click();
+ const bad={friends:[{name:'Duplicado',region:'BR1'},{name:'Duplicado',region:'BR1'}],favorites:[]};
+ await page.locator('#import-file').setInputFiles({name:'backup-invalido.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(bad))});
+ await expect(page.getByRole('status')).toContainText('duplicados');
+ await expect(page.locator('.friend-list')).toHaveCount(0);
+});

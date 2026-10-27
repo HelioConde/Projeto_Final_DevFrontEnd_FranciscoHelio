@@ -1,5 +1,5 @@
 import {settings} from './settings.js';
-import {cleanName,cleanRegion,loadState,normalizeState,saveState} from './storage.js';
+import {cleanName,cleanRegion,loadState,normalizeState,saveState,validateBackup} from './storage.js';
 import {FALLBACK,FALLBACK_VERSION,fetchChampions,icon,splash} from './catalog.js';
 import demo from '../data/demo.js';
 
@@ -80,7 +80,7 @@ function friends(){
  '<div class="empty">Ainda não há amigos salvos. Adicione o primeiro!</div>')+'</section></div>'+
  '<section class="panel backup"><h2>Backup local</h2><p>Exporte e importe a lista de amigos e favoritos em JSON.</p>'+
  '<div class="actions"><button class="button secondary" data-action="export">Exportar JSON</button><button class="button secondary" data-action="import">Importar JSON</button>'+
- '<button class="button danger-outline" data-action="clear">Apagar dados locais</button></div></section>';
+ '<button class="button danger-outline" data-action="clear">Apagar dados locais</button></div><p class="note">A importação substitui os dados locais somente após sua confirmação.</p></section>';
 }
 function gallery(){
  return '<section class="intro"><span class="label">GALERIA</span><h1>Arte de Runeterra</h1><p>Uma seleção de artes dos campeões para explorar.</p></section>'+
@@ -209,9 +209,15 @@ document.addEventListener('change',async e=>{
   try{
    const file=e.target.files[0];if(file.size>200000)throw Error('Backup acima de 200 KB.');
    const input=JSON.parse(await file.text());
-   if(!input||!Array.isArray(input.friends)||!Array.isArray(input.favorites))throw Error('Backup inválido.');
+   const validationError=validateBackup(input);
+   if(validationError)throw Error(validationError);
+   if(!window.confirm('Substituir '+data.friends.length+' amigo(s) e '+data.favorites.length+' favorito(s) deste navegador pelos dados do backup?')) {
+     notify('Importação cancelada.');
+     return;
+   }
    data=normalizeState(input);persist();render();notify('Backup importado.');
   }catch(err){notify(err.message||'Falha na importação.');}
+  finally{e.target.value='';}
  }
 });
 window.addEventListener('hashchange',()=>{render();document.getElementById('main')?.focus({preventScroll:true});window.scrollTo(0,0);});

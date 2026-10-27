@@ -39,3 +39,9 @@ Dados de partidas explicitamente fictícios; campeões públicos por Data Dragon
 - Resiliência de mídia: hero, galeria e detalhes recebem fundo local quando o CDN falha.
 - Atualizações assíncronas de catálogo não devem limpar formulários de amigos em uso.
 - O workflow também verifica a versão pública após o deploy, para identificar incompatibilidades MIME ou publicação desatualizada.
+
+## Importação de dados locais (27/10/2026)
+- Backup JSON é validado por esquema, nomes, região, unicidade e limites de 100 amigos/200 favoritos antes de alterar estado.
+- Substituir os dados exige uma confirmação explícita; cancelar mantém os dados anteriores.
+- O seletor de arquivo é limpo após importação ou erro, permitindo reimportar o mesmo arquivo.
+- Playwright cobre importação, cancelamento, persistência e arquivos duplicados, tanto no Vite quanto em cenário estático quando aplicável.
